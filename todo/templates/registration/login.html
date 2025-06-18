@@ -1,0 +1,674 @@
+{% extends 'todo/base.html' %} {% load static %} {% block content %}
+<style>
+  :root {
+    --primary-color: #6c3fcf;
+    --primary-dark: #5b2eb0;
+    --primary-light: #f0ebff;
+    --light-color: #f9fafb;
+    --dark-color: #1f2937;
+    --text-color: #4b5563;
+    --border-color: #e5e7eb;
+    --success-color: #10b981;
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  }
+
+  .auth-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    font-family: "Tajawal", "Segoe UI", sans-serif;
+  }
+
+  /* Left Image Panel */
+  .auth-image-side {
+    flex: 1;
+    background: linear-gradient(
+        rgba(108, 63, 207, 0.85),
+        rgba(91, 46, 176, 0.9)
+      ),
+      url("/media/login.png") center center / cover no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .auth-overlay {
+    max-width: 650px;
+    text-align: center;
+    color: white;
+    z-index: 10;
+    padding: 2rem;
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  .auth-overlay h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    line-height: 1.3;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .auth-overlay p {
+    font-size: 1.2rem;
+    margin-bottom: 2.5rem;
+    opacity: 0.9;
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .auth-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 3rem;
+  }
+
+  .stat-box {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    min-width: 140px;
+    transition: transform 0.3s ease;
+  }
+
+  .stat-box:hover {
+    transform: translateY(-5px);
+  }
+
+  .stat-box h4 {
+    font-size: 2.2rem;
+    margin: 0;
+    font-weight: 700;
+    color: white;
+  }
+
+  .stat-box small {
+    font-size: 1rem;
+    display: block;
+    margin-top: 0.5rem;
+    opacity: 0.9;
+  }
+
+  /* Right Form Panel */
+  .auth-form-side {
+    flex: 1;
+    background-color: #fff;
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .auth-form-box {
+    width: 100%;
+    max-width: 500px;
+    padding: 2.5rem;
+    background: white;
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .form-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .form-header h3 {
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    font-size: 2.2rem;
+    color: var(--dark-color);
+    position: relative;
+    display: inline-block;
+  }
+
+  .form-header h3::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: var(--primary-color);
+    border-radius: 2px;
+  }
+
+  .form-header p {
+    color: var(--text-color);
+    margin-top: 1.8rem;
+    font-size: 1.1rem;
+    line-height: 1.7;
+  }
+
+  /* Form Styling */
+  .form-group {
+    margin-bottom: 1.8rem;
+    position: relative;
+  }
+
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    display: block;
+    color: var(--dark-color);
+    font-size: 1.05rem;
+  }
+
+  .input-container {
+    position: relative;
+  }
+
+  .form-control {
+    padding: 1rem 1.25rem 1rem 3.5rem;
+    border-radius: 14px;
+    border: 2px solid var(--border-color);
+    width: 100%;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: "Tajawal", sans-serif;
+    height: 56px;
+  }
+
+  .form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(108, 63, 207, 0.15);
+    outline: none;
+  }
+
+  .input-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 1.1rem;
+  }
+
+  .password-toggle {
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: var(--text-color);
+    opacity: 0.7;
+    font-size: 1.1rem;
+    z-index: 2;
+  }
+
+  .password-toggle:hover {
+    color: var(--primary-color);
+  }
+
+  .btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 1.1rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 14px;
+    width: 100%;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    color: white;
+    margin-top: 0.5rem;
+    font-family: "Tajawal", sans-serif;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(108, 63, 207, 0.3);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(108, 63, 207, 0.4);
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+  }
+
+  .footer-text {
+    margin-top: 2rem;
+    text-align: center;
+    font-size: 1.05rem;
+    color: var(--text-color);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .footer-text a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 700;
+    transition: all 0.3s;
+    position: relative;
+    margin-right: 5px;
+  }
+
+  .footer-text a:hover {
+    color: var(--primary-dark);
+  }
+
+  .footer-text a::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+  }
+
+  .footer-text a:hover::after {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
+
+  .remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1.5rem 0;
+  }
+
+  .form-check {
+    display: flex;
+    align-items: center;
+  }
+
+  .form-check-input {
+    width: 1.2em;
+    height: 1.2em;
+    margin-left: 0.5rem;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+  }
+
+  .form-check-label {
+    color: var(--text-color);
+    cursor: pointer;
+    font-weight: 500;
+  }
+
+  .forgot-password {
+    color: var(--primary-color);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .forgot-password:hover {
+    text-decoration: underline;
+  }
+
+  /* Floating Animation */
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-15px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  .floating {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Form Fade In */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1200px) {
+    .auth-overlay h2 {
+      font-size: 2.2rem;
+    }
+
+    .stat-box h4 {
+      font-size: 1.8rem;
+    }
+  }
+
+  @media (max-width: 992px) {
+    .auth-container {
+      flex-direction: column;
+    }
+
+    .auth-image-side {
+      min-height: 450px;
+      padding: 1.5rem;
+    }
+
+    .auth-overlay {
+      padding: 1rem;
+    }
+
+    .auth-overlay h2 {
+      font-size: 2rem;
+    }
+
+    .auth-overlay p {
+      font-size: 1rem;
+    }
+
+    .auth-stats {
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .auth-form-box {
+      padding: 2rem;
+      margin: -80px 2rem 2rem;
+      position: relative;
+      z-index: 20;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .auth-image-side {
+      min-height: 400px;
+    }
+
+    .auth-overlay h2 {
+      font-size: 1.8rem;
+    }
+
+    .auth-stats {
+      gap: 1rem;
+    }
+
+    .stat-box {
+      min-width: 120px;
+      padding: 1.2rem 0.8rem;
+    }
+
+    .stat-box h4 {
+      font-size: 1.7rem;
+    }
+
+    .auth-form-box {
+      padding: 1.8rem;
+      margin: -60px 1.5rem 1.5rem;
+    }
+
+    .form-header h3 {
+      font-size: 1.9rem;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .auth-image-side {
+      min-height: 380px;
+    }
+
+    .auth-overlay h2 {
+      font-size: 1.6rem;
+    }
+
+    .auth-overlay p {
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-stats {
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .stat-box {
+      flex: 1;
+      min-width: calc(50% - 1rem);
+    }
+
+    .form-header h3 {
+      font-size: 1.7rem;
+    }
+
+    .form-header p {
+      font-size: 1rem;
+    }
+
+    .auth-form-box {
+      padding: 1.5rem;
+      margin: -50px 1rem 1rem;
+      border-radius: 20px;
+    }
+
+    .form-control {
+      padding: 0.9rem 0.9rem 0.9rem 3rem;
+      height: 52px;
+    }
+
+    .input-icon {
+      right: 15px;
+    }
+
+    .remember-forgot {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+  }
+
+  /* Decorative Elements */
+  .decoration {
+    position: absolute;
+    z-index: 1;
+  }
+
+  .circle-1 {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    top: 10%;
+    left: 15%;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .circle-2 {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    bottom: 15%;
+    right: 20%;
+    animation: float 7s ease-in-out infinite 0.5s;
+  }
+
+  .circle-3 {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    top: 40%;
+    right: 10%;
+    animation: float 6s ease-in-out infinite 1s;
+  }
+</style>
+
+<div class="auth-container">
+  <!-- Left: Image & Stats -->
+  <div class="auth-image-side">
+    <div class="decoration circle-1"></div>
+    <div class="decoration circle-2"></div>
+    <div class="decoration circle-3"></div>
+
+    <div class="auth-overlay floating">
+      <h2>ابدأ رحلتك في الإنجاز</h2>
+      <p>سجّل الآن وابدأ بتنظيم مهامك بذكاء وسهولة مع أدواتنا المتطورة</p>
+
+      <div class="auth-stats">
+        <div class="stat-box">
+          <h4>20,000+</h4>
+          <small>مهمة مكتملة</small>
+        </div>
+        <div class="stat-box">
+          <h4>5,000+</h4>
+          <small>مستخدم نشط</small>
+        </div>
+        <div class="stat-box">
+          <h4>95%</h4>
+          <small>رضا المستخدمين</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Form -->
+  <div class="auth-form-side">
+    <div class="auth-form-box">
+      <div class="form-header">
+        <h3>مرحبًا بعودتك!</h3>
+        <p>أدخل بياناتك لمتابعة تنظيم مهامك اليومية</p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label for="id_username" class="form-label">اسم المستخدم</label>
+          <div class="input-container">
+            <i class="fas fa-user input-icon"></i>
+            <input
+              type="text"
+              name="username"
+              id="id_username"
+              class="form-control"
+              placeholder="أدخل اسم المستخدم"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="id_password" class="form-label">كلمة المرور</label>
+          <div class="input-container">
+            <i class="fas fa-lock input-icon"></i>
+            <input
+              type="password"
+              name="password"
+              id="id_password"
+              class="form-control"
+              placeholder="أدخل كلمة المرور"
+              required
+            />
+            <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+          </div>
+        </div>
+
+        <div class="remember-forgot">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="rememberMe" />
+            <label class="form-check-label" for="rememberMe">تذكرني</label>
+          </div>
+          <a href="#" class="forgot-password">هل نسيت كلمة المرور؟</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary">تسجيل الدخول</button>
+      </form>
+
+      <div class="footer-text">
+        ليس لديك حساب؟ <a href="{% url 'signup' %}">سجل الآن</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Toggle password visibility
+  document
+    .getElementById("togglePassword")
+    .addEventListener("click", function () {
+      const passwordInput = document.getElementById("id_password");
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        this.classList.remove("fa-eye");
+        this.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        this.classList.remove("fa-eye-slash");
+        this.classList.add("fa-eye");
+      }
+    });
+
+  // Form validation
+  const form = document.querySelector("form");
+  form.addEventListener("submit", function (e) {
+    const username = document.getElementById("id_username");
+    const password = document.getElementById("id_password");
+
+    if (!username.value.trim()) {
+      e.preventDefault();
+      alert("يرجى إدخال اسم المستخدم");
+      username.focus();
+      return false;
+    }
+
+    if (!password.value.trim()) {
+      e.preventDefault();
+      alert("يرجى إدخال كلمة المرور");
+      password.focus();
+      return false;
+    }
+
+    // Simulate successful login
+    // In a real application, this would be handled by Django authentication
+    return true;
+  });
+
+  // Add focus effects
+  document.querySelectorAll(".form-control").forEach((input) => {
+    input.addEventListener("focus", function () {
+      this.parentElement.style.borderColor = "#6c3fcf";
+      this.parentElement.style.boxShadow = "0 0 0 4px rgba(108, 63, 207, 0.15)";
+    });
+
+    input.addEventListener("blur", function () {
+      this.parentElement.style.borderColor = "";
+      this.parentElement.style.boxShadow = "";
+    });
+  });
+</script>
+{% endblock %}
