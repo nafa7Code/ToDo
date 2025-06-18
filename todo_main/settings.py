@@ -96,6 +96,11 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://todo.snapbix.com",
+]
+
+
 # إعدادات الوسائط
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
