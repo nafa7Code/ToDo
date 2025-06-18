@@ -18,7 +18,11 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-dev-key')
 DEBUG = ENVIRONMENT == 'development'
 
 # المضيفون المسموح لهم
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
+
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(',')
+
+
+
 
 # التطبيقات المثبتة
 INSTALLED_APPS = [
