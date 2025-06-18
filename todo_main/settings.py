@@ -108,6 +108,7 @@ USE_TZ = True
 
 # الملفات الثابتة
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # النوع الافتراضي للمفتاح الأساسي
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
