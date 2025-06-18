@@ -1,0 +1,25 @@
+# بيئة بايثون الافتراضية
+env/
+venv/
+.venv/
+
+# ملفات البيئة
+.env
+
+# ملفات قاعدة البيانات المحلية
+*.sqlite3
+
+# ملفات Django المؤقتة
+__pycache__/
+*.py[cod]
+*.log
+
+# مجلد الملفات الثابتة
+staticfiles/
+media/
+
+# ملفات نظام macOS
+.DS_Store
+
+# ملفات VSCode
+.vscode/
